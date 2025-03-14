@@ -8,8 +8,6 @@ pipeline {
                 credentialsId: "${env.Git_Credentials_Id}",
                 url: "https://github.com/thonguyenduc2010/odoo18.git",
             }
-        }
-
     }
 
     post {
