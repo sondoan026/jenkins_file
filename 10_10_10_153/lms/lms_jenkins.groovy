@@ -4,10 +4,11 @@ pipeline {
     stages {
         stage('Checkout') {
             steps {
-                git branch: "${env.Branch_Name}",
-                credentialsId: "${env.Git_Credentials_Id}",
-                url: "https://github.com/thonguyenduc2010/odoo18.git",
+                git branch: env.Branch_Name,
+                credentialsId: env.Git_Credentials_Id,
+                url: "https://github.com/thonguyenduc2010/odoo18.git"
             }
+        }
     }
 
     post {
