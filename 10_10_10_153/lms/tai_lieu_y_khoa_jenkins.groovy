@@ -2,8 +2,6 @@ pipeline {
     agent { label '153_giao_viec' }
 
     environment  {
-        APP_PATH = "/data/tai_lieu_y_khoa"
-        COMPOSE_FILE = "/data/tai_lieu_y_khoa/docker-compose.yml"
         GIT_REPO = "https://github.com/thonguyenduc2010/odoo18.git"
         DB_NAME = "tai_lieu_y_khoa"
     }
@@ -13,12 +11,7 @@ pipeline {
         stage('Check deploy'){
             steps {
                 script {
-                    if (!fileExists("${APP_PATH}/.deployed")) {
-                        /* nếu tồn tại file deployed thì tức là đã deploy */
-                        env.CHECK_DEPLOY = "false"
-                    } else {
-                        env.CHECK_DEPLOY = "true"
-                    }
+                    env.CHECK_DEPLOY = fileExists(".deployed") ? "true" : "false"
                 }
             }
         }
@@ -34,19 +27,9 @@ pipeline {
         stage('Deploy'){
             steps {
                 script {
-                if (env.CHECK_DEPLOY == "true") {
+                if (env.CHECK_DEPLOY == "false") {
                     echo "First deployment"
                     sh """
-                        mkdir -p ${APP_PATH}
-
-                        sudo chown -R jenkins:jenkins ${APP_PATH}
-                        sudo chmod -R 755 ${APP_PATH}
-
-
-                        rsync -avz --exclude='.git/' --exclude='*.sock' --exclude='/proc/' ${env.WORKSPACE}/. ${APP_PATH}/
-
-                        cd ${APP_PATH}
-
                         mv docker-compose.yml.example docker-compose.yml
                         mv etc/odoo.conf.example etc/odoo.conf
 
@@ -66,17 +49,16 @@ pipeline {
                         -F "country_code=vn" \
                         http://127.0.0.1:17000/web/database/create
 
-                        sed -i 's@db_name = False@db_name = ${DB_NAME}@g' "${APP_PATH}/etc/odoo.conf"
+                        sed -i 's@db_name = False@db_name = ${DB_NAME}@g' "/etc/odoo.conf"
 
                         docker-compose restart
 
-                        touch ${APP_PATH}/.deployed
+                        touch .deployed
                     """
                 } else {
                     echo "Updating"
                     sh """
-                        rsync -av -delete ${env.WORKSPACE}/ ${APP_PATH}/
-                        cd ${APP_PATH} && docker-compose restart
+                        docker-compose restart
                     """
                 }
             }
