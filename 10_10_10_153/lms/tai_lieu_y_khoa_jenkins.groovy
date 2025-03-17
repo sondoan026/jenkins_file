@@ -1,7 +1,7 @@
 pipeline {
     agent { label '153_giao_viec' }
 
-    enviroment {
+    environment  {
         APP_PATH = "/data/tai_lieu_y_khoa"
         COMPOSE_FILE = "/data/tai_lieu_y_khoa/docker-compose.yml"
         GIT_REPO = "https://github.com/thonguyenduc2010/odoo18.git"
