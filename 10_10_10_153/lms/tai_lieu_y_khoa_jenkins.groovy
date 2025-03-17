@@ -86,38 +86,5 @@ pipeline {
                 }
             }
         }
-
-        post {
-                success {
-                    script {
-                        echo "✅ Deploy thành công!"
-                        /* sh """
-                            curl -X POST -H 'Content-Type: application/json' \
-                            -d '{"status": "success", "message": "Deploy thành công!", "job": "${env.JOB_NAME}", "build": "${env.BUILD_NUMBER}"}' \
-                            https://your-webhook-url.com
-                        """ */
-                    }
-                }
-                failure {
-                    script {
-                        echo "❌ Deploy thất bại!"
-                        /*sh """
-                            curl -X POST -H 'Content-Type: application/json' \
-                            -d '{"status": "failure", "message": "Deploy thất bại!", "job": "${env.JOB_NAME}", "build": "${env.BUILD_NUMBER}"}' \
-                            https://your-webhook-url.com
-                        """ */
-                    }
-                }
-                aborted {
-                    script {
-                        echo "⚠️ Deploy bị hủy!"
-                        /* sh """
-                            curl -X POST -H 'Content-Type: application/json' \
-                            -d '{"status": "aborted", "message": "Deploy bị hủy!", "job": "${env.JOB_NAME}", "build": "${env.BUILD_NUMBER}"}' \
-                            https://your-webhook-url.com
-                        """ */
-                    }
-                }
-        }
     }
 }
