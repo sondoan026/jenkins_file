@@ -43,7 +43,9 @@ pipeline {
                         sudo chmod -R 755 ${APP_PATH}
 
 
-                        rsync -avz --delete ${env.WORKSPACE}/. ${APP_PATH}/
+                        rsync -avz --delete ${env.WORKSPACE}/. ${APP_PATH}/ --log-file=/tmp/rsync.log
+                        echo "RSYNC LOG:"
+                        cat /tmp/rsync.log
 
                         cd ${APP_PATH}
 
