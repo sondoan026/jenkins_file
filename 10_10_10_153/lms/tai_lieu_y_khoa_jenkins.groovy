@@ -33,7 +33,7 @@ pipeline {
                         mv docker-compose.yml.example docker-compose.yml
                         mv etc/odoo.conf.example etc/odoo.conf
 
-                        mkdir data pg_data
+                        mkdir -p data pg_data
                         chmod -R 777 entrypoint.sh
                         chmod -R 777 data pg_data etc
 
