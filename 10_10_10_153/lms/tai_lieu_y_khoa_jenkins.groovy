@@ -27,7 +27,7 @@ pipeline {
             steps {
                 git branch: env.Branch_Name,
                 credentialsId: env.Git_Credentials_Id,
-                url: ${GIT_REPO}
+                url: "${GIT_REPO}"
             }
         }
 
