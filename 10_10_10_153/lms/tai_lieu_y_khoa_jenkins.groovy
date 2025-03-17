@@ -1,7 +1,7 @@
 pipeline {
     agent { label '153_giao_viec' }
 
-    enviroment = {
+    enviroment {
         APP_PATH = "/data/tai_lieu_y_khoa"
         COMPOSE_FILE = "/data/tai_lieu_y_khoa/docker-compose.yml"
         GIT_REPO = "https://github.com/thonguyenduc2010/odoo18.git"
@@ -15,9 +15,9 @@ pipeline {
                 script {
                     if (!fileExists("${APP_PATH}/.deployed")) {
                         /* nếu tồn tại file deployed thì tức là đã deploy */
-                        env.CHECK_DEPLOY = "true"
-                    } else {
                         env.CHECK_DEPLOY = "false"
+                    } else {
+                        env.CHECK_DEPLOY = "true"
                     }
                 }
             }
@@ -62,7 +62,7 @@ pipeline {
                         -F "country_code=vn" \
                         http://127.0.0.1:17000/web/database/create
 
-                        sed -i 's@db_name = False@db_name = ${DB_NAME}@g' "${APP_PATH/etc/odoo.conf}"
+                        sed -i 's@db_name = False@db_name = ${DB_NAME}@g' "${APP_PATH}/etc/odoo.conf"
 
                         docker-compose restart
                     """
