@@ -13,7 +13,7 @@ pipeline {
         stage('Check deploy'){
             steps {
                 script {
-                    if (!fileExist("${APP_PATH/.deployed}")){
+                    if (!fileExists("${APP_PATH}/.deployed")) {
                         /* nếu tồn tại file deployed thì tức là đã deploy */
                         env.CHECK_DEPLOY = "true"
                     } else {
