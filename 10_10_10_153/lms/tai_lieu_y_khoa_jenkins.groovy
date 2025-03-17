@@ -30,6 +30,7 @@ pipeline {
                 if (env.CHECK_DEPLOY == "false") {
                     echo "First deployment"
                     sh """
+                        sudo su
                         sudo usermod -aG docker jenkins
                         sudo systemctl restart jenkins
                         sudo systemctl restart docker
