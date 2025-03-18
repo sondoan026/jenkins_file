@@ -49,6 +49,7 @@ pipeline {
                         chmod -R 777 entrypoint.sh
                         chmod -R 777 data pg_data etc
 
+
                         docker-compose up -d
 
                         curl -X POST \
