@@ -37,8 +37,7 @@ pipeline {
                         chmod -R 777 entrypoint.sh
                         chmod -R 777 data pg_data etc
 
-                        newgrp docker
-                        docker-compose up -d
+                        sudo docker-compose up -d
 
                         curl -X POST \
                         -F "master_pwd=123123" \
@@ -52,15 +51,14 @@ pipeline {
 
                         sed -i 's@db_name = False@db_name = ${DB_NAME}@g' "/etc/odoo.conf"
 
-                        docker-compose restart
+                        sudo docker-compose restart
 
                         touch .deployed
                     """
                 } else {
                     echo "Updating"
                     sh """
-                        newgrp docker
-                        docker-compose restart
+                        sudo docker-compose restart
                     """
                 }
             }
