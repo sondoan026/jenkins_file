@@ -42,12 +42,12 @@ pipeline {
                         mv docker-compose.yml.example docker-compose.yml
                         mv etc/odoo.conf.example etc/odoo.conf
 
+                        ls -l
+
                         mkdir -p data pg_data
                         chown -R $USER entrypoint.sh data pg_data etc
                         chmod -R 777 entrypoint.sh
                         chmod -R 777 data pg_data etc
-
-                        ls -l
 
                         docker-compose up -d
 
