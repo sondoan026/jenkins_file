@@ -1,0 +1,79 @@
+pipeline {
+    agent { label '156_kangnam' }
+
+    environment  {
+        GIT_REPO = "https://github.com/thonguyenduc2010/odoo18.git"
+        DB_NAME = "app_loyalty_kn"
+        /* TELEGRAM_BOT_TOKEN = "AAHzH1m5fC_e4x1MdVeJl8aF-llVNtbjNpw"
+        TELEGRAM_CHAT_ID = "-4064083384" */
+    }
+
+    stages {
+        stage('Check deploy'){
+            steps {
+                script {
+                    env.CHECK_DEPLOY = fileExists(".deployed") ? "true" : "false"
+                }
+            }
+        }
+
+        stage('Checkout code') {
+            steps {
+                git branch: env.Branch_Name,
+                credentialsId: env.Git_Credentials_Id,
+                url: "${GIT_REPO}"
+            }
+        }
+
+        stage('Deploy'){
+            steps {
+                script {
+                if (env.CHECK_DEPLOY == "false") {
+                    echo "First deployment"
+                    sh """
+                        mv docker-compose.yml.example docker-compose.yml
+                        mv etc/odoo.conf.example etc/odoo.conf
+
+                        sudo mkdir -p data pg_data
+                        sudo chown -R $USER entrypoint.sh data pg_data etc
+                        sudo chmod -R 777 entrypoint.sh
+                        sudo chmod -R 777 data pg_data etc
+
+                        docker-compose up -d
+
+                        touch .deployed
+                    """
+                    sendTelegramMessage("🚀 App Loyalty Kangnam đã được triển khai thành công!")
+                } else {
+                    echo "Updating"
+                    sh """
+                        docker-compose restart
+                    """
+                    sendTelegramMessage("♻️ App Loyalty Kangnam đã được cập nhật và restart!")
+                }
+            }
+            }
+        }
+    }
+
+    post {
+        success {
+            script {
+                sendTelegramMessage("✅ Pipeline job Loyalty Kangnam đã chạy thành công!")
+            }
+        }
+        failure {
+            script {
+                sendTelegramMessage("❌ Pipeline job Loyalty Kangnam đã gặp lỗi! Kiểm tra log.")
+            }
+        }
+    }
+}
+
+def sendTelegramMessage(String message) {
+    sh """
+        curl -s -X POST "https://api.telegram.org/bot6102275063:${env.TELEGRAM_BOT_TOKEN}/sendMessage" \
+        -d chat_id=${env.TELEGRAM_CHAT_ID} \
+        -d text="${message}"
+    """
+}
