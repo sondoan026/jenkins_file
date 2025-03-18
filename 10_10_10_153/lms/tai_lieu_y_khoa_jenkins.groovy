@@ -4,6 +4,8 @@ pipeline {
     environment  {
         GIT_REPO = "https://github.com/thonguyenduc2010/odoo18.git"
         DB_NAME = "tai_lieu_y_khoa"
+        TELEGRAM_BOT_TOKEN = "AAEQfjmvu6OudkToWg2jxtEmigGSY7J3ljA"
+        TELEGRAM_CHAT_ID = "4035923819"
     }
 
     stages {
@@ -62,11 +64,13 @@ pipeline {
 
                         touch .deployed
                     """
+                    sendTelegramMessage("🚀 App tài liệu y khoa đã được triển khai thành công!")
                 } else {
                     echo "Updating"
                     sh """
                         docker-compose restart
                     """
+                    sendTelegramMessage("♻️ App tài liệu y khoa đã được cập nhật và restart!")
                 }
             }
             }
@@ -80,4 +84,25 @@ pipeline {
             }
         }
     }
+
+    post {
+        success {
+            script {
+                sendTelegramMessage("✅ Pipeline đã chạy thành công!")
+            }
+        }
+        failure {
+            script {
+                sendTelegramMessage("❌ Pipeline đã gặp lỗi! Kiểm tra log.")
+            }
+        }
+    }
+}
+
+def sendTelegramMessage(String message) {
+    sh """
+        curl -s -X POST "https://api.telegram.org/bot6480280702${TELEGRAM_BOT_TOKEN}/sendMessage" \
+        -d chat_id=${TELEGRAM_CHAT_ID} \
+        -d text="${message}"
+    """
 }
