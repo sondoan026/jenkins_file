@@ -54,7 +54,7 @@ pipeline {
                         -F "password=123123" \
                         -F "lang=vi_VN" \
                         -F "country_code=vn" \
-                        http://127.0.0.1:17000/web/database/create
+                        http://127.0.0.1:18002/web/database/create
 
                         sed -i 's@db_name = False@db_name = ${DB_NAME}@g' "/etc/odoo.conf"
 
