@@ -78,14 +78,6 @@ pipeline {
             }
             }
         }
-
-        stage('Clean Up'){
-            steps {
-                script {
-                    sh "docker system prune -f"
-                }
-            }
-        }
     }
 
     post {
