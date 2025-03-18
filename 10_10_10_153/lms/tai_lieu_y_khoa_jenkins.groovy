@@ -62,7 +62,7 @@ pipeline {
                         http://127.0.0.1:18002/web/database/create
 
                         sed -i 's@db_name = False@db_name = ${DB_NAME}@g' etc/odoo.conf
-                        sed -i 's@dbfilter = False@dbfilter = ^${DB_NAME}\\\$@g' etc/odoo.conf
+                        sed -i "s@dbfilter = False@dbfilter = ^"$DB_NAME"$@g" etc/odoo.conf
 
                         docker-compose restart
 
