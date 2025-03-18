@@ -5,7 +5,7 @@ pipeline {
         GIT_REPO = "https://github.com/thonguyenduc2010/odoo18.git"
         DB_NAME = "tai_lieu_y_khoa"
         TELEGRAM_BOT_TOKEN = "AAHzH1m5fC_e4x1MdVeJl8aF-llVNtbjNpw"
-        TELEGRAM_CHAT_ID = "4064083384"
+        TELEGRAM_CHAT_ID = "-4064083384"
     }
 
     stages {
@@ -106,6 +106,3 @@ def sendTelegramMessage(String message) {
         -d text="${message}"
     """
 }
-
-
-url="https://api.telegram.org/bot6102275063:AAHzH1m5fC_e4x1MdVeJl8aF-llVNtbjNpw/sendMessage?chat_id=-4064083384&text=Backup script baocao ngày $text"
