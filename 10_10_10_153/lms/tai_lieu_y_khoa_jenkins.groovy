@@ -45,9 +45,9 @@ pipeline {
                         ls -l
 
                         mkdir -p data pg_data
-                        chown -R $USER entrypoint.sh data pg_data etc
-                        chmod -R 777 entrypoint.sh
-                        chmod -R 777 data pg_data etc
+                        sudo chown -R $USER entrypoint.sh data pg_data etc
+                        sudo chmod -R 777 entrypoint.sh
+                        sudo chmod -R 777 data pg_data etc
 
 
                         docker-compose up -d
