@@ -47,6 +47,8 @@ pipeline {
                         chmod -R 777 entrypoint.sh
                         chmod -R 777 data pg_data etc
 
+                        ls -l
+
                         docker-compose up -d
 
                         curl -X POST \
@@ -92,11 +94,11 @@ pipeline {
                 sendTelegramMessage("✅ Pipeline job tai_lieu_y_khoa đã chạy thành công!")
             }
         }
-        failure {
-            script {
-                sendTelegramMessage("❌ Pipeline job tai_lieu_y_khoa đã gặp lỗi! Kiểm tra log.")
-            }
-        }
+//         failure {
+//             script {
+//                 sendTelegramMessage("❌ Pipeline job tai_lieu_y_khoa đã gặp lỗi! Kiểm tra log.")
+//             }
+//         }
     }
 }
 
