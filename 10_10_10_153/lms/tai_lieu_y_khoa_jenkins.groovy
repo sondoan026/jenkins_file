@@ -43,7 +43,7 @@ pipeline {
                         mv etc/odoo.conf.example etc/odoo.conf
 
                         mkdir -p data pg_data
-                        sudo chown -R $USER entrypoint.sh data pg_data etc
+                        chown -R $USER entrypoint.sh data pg_data etc
                         chmod -R 777 entrypoint.sh
                         chmod -R 777 data pg_data etc
 
