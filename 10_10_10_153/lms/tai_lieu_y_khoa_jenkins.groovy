@@ -9,15 +9,6 @@ pipeline {
     }
 
     stages {
-
-        stage('Check User') {
-            steps {
-                sh 'whoami'
-                sh 'groups'
-                sh 'pwd'
-            }
-        }
-
         stage('Check deploy'){
             steps {
                 script {
