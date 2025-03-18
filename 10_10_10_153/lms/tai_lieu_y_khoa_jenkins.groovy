@@ -51,14 +51,14 @@ pipeline {
 
                         sed -i 's@db_name = False@db_name = ${DB_NAME}@g' "/etc/odoo.conf"
 
-                        docker-compose restart
+                        sudo docker-compose restart
 
                         touch .deployed
                     """
                 } else {
                     echo "Updating"
                     sh """
-                        docker-compose restart
+                        sudo docker-compose restart
                     """
                 }
             }
