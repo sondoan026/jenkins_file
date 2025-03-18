@@ -14,6 +14,7 @@ pipeline {
             steps {
                 sh 'whoami'
                 sh 'groups'
+                sh 'pwd'
             }
         }
 
@@ -41,8 +42,6 @@ pipeline {
                     sh """
                         mv docker-compose.yml.example docker-compose.yml
                         mv etc/odoo.conf.example etc/odoo.conf
-
-                        ls -l
 
                         sudo mkdir -p data pg_data
                         sudo chown -R $USER entrypoint.sh data pg_data etc
