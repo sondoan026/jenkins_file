@@ -8,6 +8,13 @@ pipeline {
 
     stages {
 
+        stage('Check User') {
+            steps {
+                sh 'whoami'
+                sh 'groups'
+            }
+        }
+
         stage('Check deploy'){
             steps {
                 script {
