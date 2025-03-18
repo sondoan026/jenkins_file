@@ -88,12 +88,12 @@ pipeline {
     post {
         success {
             script {
-                sendTelegramMessage("✅ Pipeline đã chạy thành công!")
+                sendTelegramMessage("✅ Pipeline job tai_lieu_y_khoa đã chạy thành công!")
             }
         }
         failure {
             script {
-                sendTelegramMessage("❌ Pipeline đã gặp lỗi! Kiểm tra log.")
+                sendTelegramMessage("❌ Pipeline job tai_lieu_y_khoa đã gặp lỗi! Kiểm tra log.")
             }
         }
     }
