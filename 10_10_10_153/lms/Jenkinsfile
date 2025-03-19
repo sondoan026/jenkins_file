@@ -54,10 +54,8 @@ pipeline {
                     sh "docker-compose restart"
                     sendTelegramMessage("♻️ App Loyalty Kangnam đã được cập nhật và restart!")
                 } else {
-                    echo "Updating"
-                    sh """
-                        docker-compose restart
-                    """
+                    echo "⛔ Stopping application..."
+                    sh "docker-compose down"
                     sendTelegramMessage("♻️ App tài liệu y khoa đã được cập nhật và restart!")
                 }
             }

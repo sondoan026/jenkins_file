@@ -17,7 +17,6 @@ pipeline {
                 script {
                     env.ACTION = params.ACTION?.trim() ?: 'restart'
                     echo " ACTION selected:${env.ACTION}"
-                    echo " params selected:${params.ACTION}"
                 }
             }
         } // đóng stage Check action
@@ -35,7 +34,6 @@ pipeline {
         stage('Deploy') {
             steps {
                 script {
-                    echo " var ${env.ACTION} "
                     if (env.ACTION == 'start') {
                         echo "🚀 First deployment"
                         sh """ 
@@ -49,17 +47,15 @@ pipeline {
 
                         docker-compose up -d
                         """
-//                         sendTelegramMessage("🚀 App Loyalty Kangnam đã được triển khai thành công!")
+                        sendTelegramMessage("🚀 App Loyalty Kangnam đã được triển khai thành công!")
                     } else if ( env.ACTION == 'restart') {
                         echo "♻️ Restarting application"
                         sh "docker-compose restart"
                         sendTelegramMessage("♻️ App Loyalty Kangnam đã được cập nhật và restart!")
-                    } else if (env.ACTION == 'stop') {
+                    } else {
                         echo "⛔ Stopping application..."
                         sh "docker-compose down"
-//                         sendTelegramMessage("⛔ App Loyalty Kangnam đã bị dừng!")
-                    } else {
-                        echo "⚠️ Lỗi: Hành động không hợp lệ!"
+                        sendTelegramMessage("⛔ App Loyalty Kangnam đã bị dừng!")
                     }
                 }
             }
