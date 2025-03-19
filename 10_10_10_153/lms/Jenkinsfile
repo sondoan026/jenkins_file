@@ -56,7 +56,7 @@ pipeline {
                 } else {
                     echo "⛔ Stopping application..."
                     sh "docker-compose down"
-                    sendTelegramMessage("♻️ App tài liệu y khoa đã được cập nhật và restart!")
+                    sendTelegramMessage("⛔ App Loyalty Kangnam đã bị dừng!")
                 }
             }
             }
