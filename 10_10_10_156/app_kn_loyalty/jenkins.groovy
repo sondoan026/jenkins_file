@@ -17,6 +17,7 @@ pipeline {
                 script {
                     env.ACTION = params.ACTION?.trim() ?: 'restart'
                     echo " ACTION selected:${env.ACTION}"
+                    echo " params selected:${params.ACTION}"
                 }
             }
         } // đóng stage Check action
