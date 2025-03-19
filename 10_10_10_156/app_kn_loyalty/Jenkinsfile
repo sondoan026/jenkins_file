@@ -53,7 +53,7 @@ pipeline {
                         echo "♻️ Restarting application"
                         sh "docker-compose restart"
                         sendTelegramMessage("♻️ App Loyalty Kangnam đã được cập nhật và restart!")
-                    } else if (action == 'stop') {
+                    } else if (env.ACTION == 'stop') {
                         echo "⛔ Stopping application..."
                         sh "docker-compose down"
                         sendTelegramMessage("⛔ App Loyalty Kangnam đã bị dừng!")
