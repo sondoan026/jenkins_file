@@ -1,21 +1,26 @@
 pipeline {
     agent { label '153_giao_viec' }
 
+    parameters {
+        choice(name: 'ACTION', choices: ['start', 'restart', 'stop'], description: 'Hành động')
+    } // đóng parameters
+
     environment  {
         GIT_REPO = "https://github.com/thonguyenduc2010/odoo18.git"
         DB_NAME = "tai_lieu_y_khoa"
         /* TELEGRAM_BOT_TOKEN = "AAHzH1m5fC_e4x1MdVeJl8aF-llVNtbjNpw"
         TELEGRAM_CHAT_ID = "-4064083384" */
-    }
+    } // đóng environment
 
     stages {
-        stage('Check deploy'){
+        stage('Check action') {
             steps {
                 script {
-                    env.CHECK_DEPLOY = fileExists(".deployed") ? "true" : "false"
+                    env.ACTION = params.ACTION?.trim() ?: 'restart'
+                    echo " ACTION selected: ${env.ACTION}"
                 }
             }
-        }
+        } // đóng stage Check action
 
         stage('Checkout code') {
             steps {
@@ -23,12 +28,12 @@ pipeline {
                 credentialsId: env.Git_Credentials_Id,
                 url: "${GIT_REPO}"
             }
-        }
+        } // đóng stage checkout code
 
         stage('Deploy'){
             steps {
                 script {
-                if (env.CHECK_DEPLOY == "false") {
+                if (env.ACTION == "start") {
                     echo "First deployment"
                     sh """
                         mv docker-compose.yml.example docker-compose.yml
@@ -44,6 +49,10 @@ pipeline {
                         touch .deployed
                     """
                     sendTelegramMessage("🚀 App tài liệu y khoa đã được triển khai thành công!")
+                } else if ( env.ACTION == 'restart') {
+                    echo "♻️ Restarting application"
+                    sh "docker-compose restart"
+                    sendTelegramMessage("♻️ App Loyalty Kangnam đã được cập nhật và restart!")
                 } else {
                     echo "Updating"
                     sh """
@@ -53,8 +62,9 @@ pipeline {
                 }
             }
             }
-        }
-    }
+        } // đóng stage deploy
+
+    } // đóng stages
 
     post {
         success {
@@ -67,7 +77,7 @@ pipeline {
                 sendTelegramMessage("❌ Pipeline job tai_lieu_y_khoa đã gặp lỗi! Kiểm tra log.")
             }
         }
-    }
+    } // đóng post
 }
 
 def sendTelegramMessage(String message) {
@@ -76,4 +86,4 @@ def sendTelegramMessage(String message) {
         -d chat_id=${env.TELEGRAM_CHAT_ID} \
         -d text="${message}"
     """
-}
+} // đóng hàm sendTelegramMessage
