@@ -35,6 +35,7 @@ pipeline {
         stage('Deploy') {
             steps {
                 script {
+                    echo " var ${env.ACTION} "
                     if (env.ACTION == 'start') {
                         echo "🚀 First deployment"
                         sh """ 
@@ -48,7 +49,7 @@ pipeline {
 
                         docker-compose up -d
                         """
-                        sendTelegramMessage("🚀 App Loyalty Kangnam đã được triển khai thành công!")
+//                         sendTelegramMessage("🚀 App Loyalty Kangnam đã được triển khai thành công!")
                     } else if ( env.ACTION == 'restart') {
                         echo "♻️ Restarting application"
                         sh "docker-compose restart"
@@ -56,7 +57,7 @@ pipeline {
                     } else if (env.ACTION == 'stop') {
                         echo "⛔ Stopping application..."
                         sh "docker-compose down"
-                        sendTelegramMessage("⛔ App Loyalty Kangnam đã bị dừng!")
+//                         sendTelegramMessage("⛔ App Loyalty Kangnam đã bị dừng!")
                     } else {
                         echo "⚠️ Lỗi: Hành động không hợp lệ!"
                     }
