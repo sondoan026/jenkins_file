@@ -2,7 +2,7 @@ pipeline {
     agent { label '153_giao_viec' }
 
     parameters {
-        choice(name: 'ACTION', choices: ['start', 'restart', 'stop'], description: 'Hành động')
+        choice(name: 'ACTION', choices: ['restart', 'start', 'stop'], description: 'Hành động')
     } // đóng parameters
 
     environment  {
