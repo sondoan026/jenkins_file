@@ -32,37 +32,39 @@ pipeline {
             }
         } // đóng stage Checkout code
 
-//         stage('Deploy') {
-//             steps {
-//                 script {
-//                     if (env.ACTION == 'start') {
-//                         echo "🚀 First deployment"
-//                         sh """
-//                         mv docker-compose.yml.example docker-compose.yml
-//                         mv etc/odoo.conf.example etc/odoo.conf
-//
-//                         sudo mkdir -p data pg_data
-//                         sudo chown -R $USER entrypoint.sh data pg_data etc
-//                         sudo chmod -R 777 entrypoint.sh
-//                         sudo chmod -R 777 data pg_data etc
-//
-//                         docker-compose up -d
-//                         """
-//                         sendTelegramMessage("🚀 ${TITLE} đã được triển khai thành công!")
-//                     } else if ( env.ACTION == 'restart') {
-//                         echo "♻️ Restarting application"
-//                         sh "docker-compose restart"
-//                         sendTelegramMessage("♻️ ${TITLE} đã được cập nhật và restart!")
-//                     } else {
-//                         echo "⛔ Stopping application..."
-//                         sh "docker-compose down"
-//                         sendTelegramMessage("⛔ ${TITLE} đã bị dừng!")
-//                     }
-//                 }
-//             }
-//         } // đóng stage Deploy
+        stage('Deploy') {
+            steps {
+                script {
+                    if (env.ACTION == 'start') {
+                        echo "🚀 First deployment"
+                        sh """
+                        mv docker-compose.yml.example docker-compose.yml
+                        mv etc/odoo.conf.example etc/odoo.conf
 
-        post {
+                        sudo mkdir -p data pg_data
+                        sudo chown -R $USER entrypoint.sh data pg_data etc
+                        sudo chmod -R 777 entrypoint.sh
+                        sudo chmod -R 777 data pg_data etc
+
+                        docker-compose up -d
+                        """
+                        sendTelegramMessage("🚀 ${TITLE} đã được triển khai thành công!")
+                    } else if ( env.ACTION == 'restart') {
+                        echo "♻️ Restarting application"
+                        sh "docker-compose restart"
+                        sendTelegramMessage("♻️ ${TITLE} đã được cập nhật và restart!")
+                    } else {
+                        echo "⛔ Stopping application..."
+                        sh "docker-compose down"
+                        sendTelegramMessage("⛔ ${TITLE} đã bị dừng!")
+                    }
+                }
+            }
+        } // đóng stage Deploy
+
+    } // đóng stages
+
+    post {
             success {
                 script {
                     sendTelegramMessage("✅ Pipeline job ${TITLE} đã chạy thành công!")
@@ -74,8 +76,6 @@ pipeline {
                 }
             }
         } // đóng post
-
-    } // đóng stages
 
 } // đóng pipeline
 
