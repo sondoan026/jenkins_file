@@ -2,7 +2,7 @@ pipeline {
     agent { label '156_kangnam' }
 
     parameters {
-        choice(name: 'ACTION', choices: ['start', 'restart', 'stop'], description: 'Hành động')
+        choice(name: 'ACTION', choices: ['restart', 'start', 'stop'], description: 'Hành động')
     } // đóng parameters
 
     environment {
