@@ -45,8 +45,6 @@ pipeline {
                         sudo chmod -R 777 data pg_data etc
 
                         docker-compose up -d
-
-                        touch .deployed
                     """
                     sendTelegramMessage("🚀 App tài liệu y khoa đã được triển khai thành công!")
                 } else if ( env.ACTION == 'restart') {
