@@ -36,7 +36,7 @@ pipeline {
                 script {
                     if (env.ACTION == 'start') {
                         echo "🚀 First deployment"
-                        sh """ 
+                        sh """
                         mv docker-compose.yml.example docker-compose.yml
                         mv etc/odoo.conf.example etc/odoo.conf
 
@@ -64,15 +64,14 @@ pipeline {
         post {
             success {
                 script {
-                    sendTelegramMessage("✅ Pipeline job Loyalty Kangnam đã chạy thành công!")
+                    sendTelegramMessage("✅ Pipeline job tai_lieu_y_khoa đã chạy thành công!")
                 }
-            } // đóng success
+            }
             failure {
                 script {
-                    sendTelegramMessage("❌ Pipeline job Loyalty Kangnam đã gặp lỗi! Kiểm tra log.")
+                    sendTelegramMessage("❌ Pipeline job tai_lieu_y_khoa đã gặp lỗi! Kiểm tra log.")
                 }
-            } // đóng failure
-
+            }
         } // đóng post
 
     } // đóng stages
