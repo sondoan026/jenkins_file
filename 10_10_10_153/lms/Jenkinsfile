@@ -9,8 +9,6 @@ pipeline {
         GIT_REPO = "https://github.com/thonguyenduc2010/odoo18.git"
         DB_NAME = "tai_lieu_y_khoa"
         APP_URL = "https://tailieu.scigroup.com.vn"
-        /* TELEGRAM_BOT_TOKEN = "AAHzH1m5fC_e4x1MdVeJl8aF-llVNtbjNpw"
-        TELEGRAM_CHAT_ID = "-4064083384" */
     } // đóng environment
 
     stages {
@@ -31,22 +29,41 @@ pipeline {
             }
         } // đóng stage checkout code
 
-        stage('Get Commit Info') {
+        stage('Get Commit Info & Send to Telegram') {
             steps {
                 script {
+                    // Lấy thông tin từ Git
+                    def commitHash = env.GIT_COMMIT ?: sh(script: "git rev-parse --short HEAD", returnStdout: true).trim()
                     def commitMessage = sh(script: "git log -1 --pretty=%B", returnStdout: true).trim()
                     def author = sh(script: "git log -1 --pretty=format:'%an'", returnStdout: true).trim()
+                    def branch = env.GIT_BRANCH ?: sh(script: "git rev-parse --abbrev-ref HEAD", returnStdout: true).trim()
+                    def repoUrl = env.GIT_URL ?: "Unknown Repo"
 
-                    sendTelegramMessage("""
-                        🚀 *Commit mới trên hệ thống: ${APP_URL} *
+                    // Lấy danh sách và số lượng file thay đổi
+                    def changedFiles = sh(script: "git diff-tree --no-commit-id --name-only -r ${commitHash}", returnStdout: true).trim()
+                    def changedFilesCount = sh(script: "git diff-tree --no-commit-id --name-only -r ${commitHash} | wc -l", returnStdout: true).trim()
+
+                    // Format danh sách file thay đổi
+                    def fileList = changedFiles ? changedFiles.split("\n").collect { "🔹 " + it }.join("\n") : "Không có file thay đổi."
+
+                    // Tạo nội dung tin nhắn Telegram
+                    def message = """
+                        🚀 *New Commit Detected!*
+                        📂 *Repository:* ${repoUrl}
+                        🌿 *Branch:* ${branch}
                         🧑‍💻 *Author:* ${author}
+                        🔢 *Commit:* `${commitHash}`
                         📝 *Message:* ${commitMessage}
-                                            """.stripIndent())
+                        📄 *Files Changed:* ${changedFilesCount}
 
+                        ${fileList}
+                        """.stripIndent()
+
+                    sendTelegramMessage(message)
                 }
-
             }
-        } // đóng get commit info
+        }
+
 
         stage('Deploy'){
             steps {
@@ -64,15 +81,15 @@ pipeline {
 
                         docker-compose up -d
                     """
-                    sendTelegramMessage("🚀 App tài liệu y khoa đã được triển khai thành công!")
+                    sendTelegramMessage("🚀 App tài liệu y khoa đã được triển khai thành công! ✅ Pipeline done")
                 } else if ( env.ACTION == 'restart') {
                     echo "♻️ Restarting application"
                     sh "docker-compose restart"
-                    sendTelegramMessage("♻️ App Loyalty Kangnam đã được cập nhật và restart!")
+                    sendTelegramMessage("♻️ App Loyalty Kangnam đã được cập nhật và restart! ✅ Pipeline done")
                 } else {
                     echo "⛔ Stopping application..."
                     sh "docker-compose down"
-                    sendTelegramMessage("⛔ App Loyalty Kangnam đã bị dừng!")
+                    sendTelegramMessage("⛔ App Loyalty Kangnam đã bị dừng! ✅ Pipeline done")
                 }
             }
             }
@@ -80,18 +97,18 @@ pipeline {
 
     } // đóng stages
 
-//     post {
+    post {
 //         success {
 //             script {
 //                 sendTelegramMessage("✅ Pipeline job tai_lieu_y_khoa đã chạy thành công!")
 //             }
 //         }
-//         failure {
-//             script {
-//                 sendTelegramMessage("❌ Pipeline job tai_lieu_y_khoa đã gặp lỗi! Kiểm tra log.")
-//             }
-//         }
-//     } // đóng post
+        failure {
+            script {
+                sendTelegramMessage("❌ Pipeline job tai_lieu_y_khoa đã gặp lỗi! Kiểm tra log.")
+            }
+        }
+    } // đóng post
 }
 
 def sendTelegramMessage(String message) {
