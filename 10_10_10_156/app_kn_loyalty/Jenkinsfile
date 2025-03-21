@@ -51,6 +51,7 @@ pipeline {
                         sendTelegramMessage("🚀 ${TITLE} đã được triển khai thành công!")
                     } else if ( env.ACTION == 'restart') {
                         echo "♻️ Restarting application"
+                        sh "sudo chmod -R 777 etc"
                         sh "docker-compose restart"
                         sendTelegramMessage("♻️ ${TITLE} đã được cập nhật và restart!")
                     } else {
