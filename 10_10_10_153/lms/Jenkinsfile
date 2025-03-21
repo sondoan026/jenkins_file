@@ -39,7 +39,7 @@ pipeline {
                     def branch = env.GIT_BRANCH ?: sh(script: "git rev-parse --abbrev-ref HEAD", returnStdout: true).trim()
                     def repoUrl = env.GIT_URL ?: "Unknown Repo"
 
-                    def message = """
+                    sendTelegramMessage("""
                         🚀 *New Commit Detected!*
                         📂 *Repository:* ${repoUrl}
                         🌿 *Branch:* ${branch}
@@ -47,7 +47,8 @@ pipeline {
                         🔢 *Commit:* `${commitHash}`
                         📝 *Message:* ${commitMessage}
                         🔗 [View on GitHub](YOUR_REPO_URL/commit/${commitHash})
-                                            """.stripIndent()
+                                            """.stripIndent())
+
                 }
 
             }
