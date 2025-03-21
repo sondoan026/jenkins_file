@@ -8,6 +8,7 @@ pipeline {
     environment  {
         GIT_REPO = "https://github.com/thonguyenduc2010/odoo18.git"
         DB_NAME = "tai_lieu_y_khoa"
+        APP_URL = "https://tailieu.scigroup.com.vn"
         /* TELEGRAM_BOT_TOKEN = "AAHzH1m5fC_e4x1MdVeJl8aF-llVNtbjNpw"
         TELEGRAM_CHAT_ID = "-4064083384" */
     } // đóng environment
@@ -33,14 +34,11 @@ pipeline {
         stage('Get Commit Info') {
             steps {
                 script {
-                    def commitHash = sh(script: "git rev-parse --short HEAD", returnStdout: true).trim()
                     def commitMessage = sh(script: "git log -1 --pretty=%B", returnStdout: true).trim()
                     def author = sh(script: "git log -1 --pretty=format:'%an'", returnStdout: true).trim()
-                    def branch = env.GIT_BRANCH ?: sh(script: "git rev-parse --abbrev-ref HEAD", returnStdout: true).trim()
-                    def repoUrl = env.GIT_URL ?: "Unknown Repo"
 
                     sendTelegramMessage("""
-                        🚀 *Commit mới trên hệ thống!*
+                        🚀 *Commit mới trên hệ thống: ${APP_URL} *
                         🧑‍💻 *Author:* ${author}
                         📝 *Message:* ${commitMessage}
                                             """.stripIndent())
