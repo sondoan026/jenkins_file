@@ -33,10 +33,15 @@ pipeline {
         stage('Get Commit Info') {
             steps {
                 script {
-                    echo "Branch: ${env.GIT_BRANCH}"
-                    echo "Commit: ${env.GIT_COMMIT}"
-                    echo "Repository URL: ${env.GIT_URL}"
+                    def commitHash = sh(script: "git rev-parse HEAD", returnStdout: true).trim()
+                    def commitMessage = sh(script: "git log -1 --pretty=%B", returnStdout: true).trim()
+                    def author = sh(script: "git log -1 --pretty=format:'%an'", returnStdout: true).trim()
+
+                    echo "Commit Hash: ${commitHash}"
+                    echo "Commit Message: ${commitMessage}"
+                    echo "Author: ${author}"
                 }
+
             }
         } // đóng get commit info
 
