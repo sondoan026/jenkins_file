@@ -9,6 +9,7 @@ pipeline {
         GIT_REPO = "https://github.com/thonguyenduc2010/odoo18.git"
         DB_NAME = "app_loyalty_kn"
         TITLE = "API APP Loyalty Kang"
+        APP_URL = "https://loyalty.kangnam.com.vn"
     } // đóng environment
 
     stages {
@@ -32,6 +33,35 @@ pipeline {
             }
         } // đóng stage Checkout code
 
+        stage('Get Commit Info & Send to Telegram') {
+            steps {
+                script {
+                    // Lấy thông tin từ Git
+                    def commitHash = env.GIT_COMMIT ?: sh(script: "git rev-parse --short HEAD", returnStdout: true).trim()
+                    def commitMessage = sh(script: "git log -1 --pretty=%B", returnStdout: true).trim()
+                    def author = sh(script: "git log -1 --pretty=format:'%an'", returnStdout: true).trim()
+                    def branch = env.GIT_BRANCH ?: sh(script: "git rev-parse --abbrev-ref HEAD", returnStdout: true).trim()
+                    def repoUrl = env.GIT_URL ?: "Unknown Repo"
+
+                    // Lấy danh sách và số lượng file thay đổi
+                    def changedFiles = sh(script: "git diff-tree --no-commit-id --name-only -r ${commitHash}", returnStdout: true).trim()
+                    def changedFilesCount = sh(script: "git diff-tree --no-commit-id --name-only -r ${commitHash} | wc -l", returnStdout: true).trim()
+
+                    // Format danh sách file thay đổi
+                    def fileList = changedFiles ? changedFiles.split("\n").collect { "🔹 " + it }.join("\n") : "Không có file thay đổi."
+
+                    // Tạo nội dung tin nhắn Telegram
+                    def message = """
+                        🚀 *Commit mới trên: ${APP_URL}*
+                        🧑‍💻 *Author:* ${author}
+                        📝 *Message:* ${commitMessage}
+                        """.stripIndent()
+
+                    sendTelegramMessage(message)
+                }
+            }
+        }
+
         stage('Deploy') {
             steps {
                 script {
@@ -48,15 +78,15 @@ pipeline {
 
                         docker-compose up -d
                         """
-                        sendTelegramMessage("🚀 ${TITLE} đã được triển khai thành công!")
+                        sendTelegramMessage("🚀 ${TITLE} đã được triển khai thành công! ✅ Pipeline done")
                     } else if ( env.ACTION == 'restart') {
                         echo "♻️ Restarting application"
                         sh "docker-compose restart"
-                        sendTelegramMessage("♻️ ${TITLE} đã được cập nhật và restart!")
+                        sendTelegramMessage("♻️ ${TITLE} đã được cập nhật và restart! ✅ Pipeline done")
                     } else {
                         echo "⛔ Stopping application..."
                         sh "docker-compose down"
-                        sendTelegramMessage("⛔ ${TITLE} đã bị dừng!")
+                        sendTelegramMessage("⛔ ${TITLE} đã bị dừng! ✅ Pipeline done")
                     }
                 }
             }
@@ -65,11 +95,11 @@ pipeline {
     } // đóng stages
 
     post {
-            success {
-                script {
-                    sendTelegramMessage("✅ Pipeline job ${TITLE} đã chạy thành công!")
-                }
-            }
+//             success {
+//                 script {
+//                     sendTelegramMessage("✅ Pipeline job ${TITLE} đã chạy thành công!")
+//                 }
+//             }
             failure {
                 script {
                     sendTelegramMessage("❌ Pipeline job ${TITLE} đã gặp lỗi! Kiểm tra log.")
