@@ -30,6 +30,16 @@ pipeline {
             }
         } // đóng stage checkout code
 
+        stage('Get Commit Info') {
+            steps {
+                script {
+                    echo "Branch: ${env.GIT_BRANCH}"
+                    echo "Commit: ${env.GIT_COMMIT}"
+                    echo "Repository URL: ${env.GIT_URL}"
+                }
+            }
+        } // đóng get commit info
+
         stage('Deploy'){
             steps {
                 script {
