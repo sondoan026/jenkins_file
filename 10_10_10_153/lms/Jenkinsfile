@@ -33,13 +33,21 @@ pipeline {
         stage('Get Commit Info') {
             steps {
                 script {
-                    def commitHash = sh(script: "git rev-parse HEAD", returnStdout: true).trim()
+                    def commitHash = sh(script: "git rev-parse --short HEAD", returnStdout: true).trim()
                     def commitMessage = sh(script: "git log -1 --pretty=%B", returnStdout: true).trim()
                     def author = sh(script: "git log -1 --pretty=format:'%an'", returnStdout: true).trim()
+                    def branch = env.GIT_BRANCH ?: sh(script: "git rev-parse --abbrev-ref HEAD", returnStdout: true).trim()
+                    def repoUrl = env.GIT_URL ?: "Unknown Repo"
 
-                    echo "Commit Hash: ${commitHash}"
-                    echo "Commit Message: ${commitMessage}"
-                    echo "Author: ${author}"
+                    def message = """
+                        🚀 *New Commit Detected!*
+                        📂 *Repository:* ${repoUrl}
+                        🌿 *Branch:* ${branch}
+                        🧑‍💻 *Author:* ${author}
+                        🔢 *Commit:* `${commitHash}`
+                        📝 *Message:* ${commitMessage}
+                        🔗 [View on GitHub](YOUR_REPO_URL/commit/${commitHash})
+                                            """.stripIndent()
                 }
 
             }
