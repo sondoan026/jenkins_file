@@ -40,13 +40,9 @@ pipeline {
                     def repoUrl = env.GIT_URL ?: "Unknown Repo"
 
                     sendTelegramMessage("""
-                        🚀 *New Commit Detected!*
-                        📂 *Repository:* ${repoUrl}
-                        🌿 *Branch:* ${branch}
+                        🚀 *Commit mới trên hệ thống!*
                         🧑‍💻 *Author:* ${author}
-                        🔢 *Commit:* `${commitHash}`
                         📝 *Message:* ${commitMessage}
-                        🔗 [View on GitHub](YOUR_REPO_URL/commit/${commitHash})
                                             """.stripIndent())
 
                 }
@@ -86,18 +82,18 @@ pipeline {
 
     } // đóng stages
 
-    post {
-        success {
-            script {
-                sendTelegramMessage("✅ Pipeline job tai_lieu_y_khoa đã chạy thành công!")
-            }
-        }
-        failure {
-            script {
-                sendTelegramMessage("❌ Pipeline job tai_lieu_y_khoa đã gặp lỗi! Kiểm tra log.")
-            }
-        }
-    } // đóng post
+//     post {
+//         success {
+//             script {
+//                 sendTelegramMessage("✅ Pipeline job tai_lieu_y_khoa đã chạy thành công!")
+//             }
+//         }
+//         failure {
+//             script {
+//                 sendTelegramMessage("❌ Pipeline job tai_lieu_y_khoa đã gặp lỗi! Kiểm tra log.")
+//             }
+//         }
+//     } // đóng post
 }
 
 def sendTelegramMessage(String message) {
