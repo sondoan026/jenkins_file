@@ -70,6 +70,7 @@ pipeline {
                         sh """
                         mv docker-compose.yml.example docker-compose.yml
                         mv etc/odoo.conf.example etc/odoo.conf
+                        mv etc/server.log.example etc/server.log
 
                         sudo mkdir -p data pg_data
                         sudo chown -R $USER entrypoint.sh data pg_data etc
