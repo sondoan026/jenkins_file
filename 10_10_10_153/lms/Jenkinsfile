@@ -83,7 +83,7 @@ pipeline {
                     sendTelegramMessage("♻️ App ${TITLE} đã được cập nhật và restart! ✅ Pipeline done")
                 } else {
                     echo "⛔ Stopping application..."
-                    sh "docker-compose down"
+                    sh "docker-compose stop"
                     sendTelegramMessage("⛔ App ${TITLE} đã bị dừng! ✅ Pipeline done")
                 }
             }
