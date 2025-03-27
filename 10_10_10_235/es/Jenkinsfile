@@ -6,9 +6,7 @@ pipeline {
     } // đóng parameters
 
     environment {
-        GIT_REPO = "https://github.com/sondoan026/es.git"
         TITLE = "Elasticsearch"
-//         APP_URL = "https://loyalty.kangnam.com.vn"
     } // đóng environment
 
     stages {
@@ -27,7 +25,7 @@ pipeline {
                 git(
                     branch: env.Branch_Name,
                     credentialsId: env.Git_Credentials_Id,
-                    url: "${GIT_REPO}"
+                    url: env.Git_Repo
                 )
             }
         } // đóng stage Checkout code
@@ -69,6 +67,7 @@ pipeline {
                         sh """
                         mv docker-compose.yml.example docker-compose.yml
 
+                        sudo chown -R $USER elasticsearch kibana logstash
                         sudo chmod -R 777 elasticsearch/ kibana/ logstash/
 
                         docker-compose up -d
