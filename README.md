@@ -11,7 +11,7 @@
 
 
 # Tạo workspace cho jenkins trên server node
-- mkdir /var/lib/jenkins
+- sudo mkdir /var/lib/jenkins
 - sudo chmod 777 /var/lib/jenkins
 - sudo mkdir -p /var/lib/jenkins/.ssh
 - sudo chown -R ubuntu2004:ubuntu2004 /var/lib/jenkins/.ssh
