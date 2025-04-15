@@ -7,9 +7,10 @@ pipeline {
 
     environment {
         GIT_REPO = "https://github.com/thonguyenduc2010/odoo18.git"
-        DB_NAME = "app_loyalty_kn"
-        TITLE = "API APP Loyalty Kang"
+        DB_NAME = "app_kn"
+        TITLE = "API APP Loyalty KangNam"
         APP_URL = "https://loyalty.kangnam.com.vn"
+        BRANCH_NAME = 'app_kn'
     } // đóng environment
 
     stages {
@@ -26,7 +27,7 @@ pipeline {
         stage('Checkout code') {
             steps {
                 git(
-                    branch: env.Branch_Name,
+                    branch: BRANCH_NAME,
                     credentialsId: env.Git_Credentials_Id,
                     url: "${GIT_REPO}"
                 )
@@ -43,9 +44,6 @@ pipeline {
                     def branch = env.GIT_BRANCH ?: sh(script: "git rev-parse --abbrev-ref HEAD", returnStdout: true).trim()
                     def repoUrl = env.GIT_URL ?: "Unknown Repo"
 
-                    // Lấy danh sách và số lượng file thay đổi
-                    def changedFiles = sh(script: "git diff-tree --no-commit-id --name-only -r ${commitHash}", returnStdout: true).trim()
-                    def changedFilesCount = sh(script: "git diff-tree --no-commit-id --name-only -r ${commitHash} | wc -l", returnStdout: true).trim()
 
                     // Format danh sách file thay đổi
                     def fileList = changedFiles ? changedFiles.split("\n").collect { "🔹 " + it }.join("\n") : "Không có file thay đổi."

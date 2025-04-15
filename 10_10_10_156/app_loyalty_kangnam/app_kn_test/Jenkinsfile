@@ -1,0 +1,114 @@
+pipeline {
+    agent { label '156_kangnam' }
+
+    parameters {
+        choice(name: 'ACTION', choices: ['restart', 'start', 'stop'], description: 'Hành động')
+    } // đóng parameters
+
+    environment {
+        GIT_REPO = "https://github.com/thonguyenduc2010/odoo18.git"
+        DB_NAME = "app_kn_test"
+        TITLE = "API APP Loyalty KangNam Test"
+        APP_URL = "https://test-loyalty.kangnam.com.vn"
+        BRANCH_NAME = 'app_kn_test'
+    } // đóng environment
+
+    stages {
+
+        stage('Check action') {
+            steps {
+                script {
+                    env.ACTION = params.ACTION?.trim() ?: 'restart'
+                    echo " ACTION selected:${env.ACTION}"
+                }
+            }
+        } // đóng stage Check action
+
+        stage('Checkout code') {
+            steps {
+                git(
+                    branch: BRANCH_NAME,
+                    credentialsId: env.Git_Credentials_Id,
+                    url: "${GIT_REPO}"
+                )
+            }
+        } // đóng stage Checkout code
+
+        stage('Get Commit Info & Send to Telegram') {
+            steps {
+                script {
+                    // Lấy thông tin từ Git
+                    def commitHash = env.GIT_COMMIT ?: sh(script: "git rev-parse --short HEAD", returnStdout: true).trim()
+                    def commitMessage = sh(script: "git log -1 --pretty=%B", returnStdout: true).trim()
+                    def author = sh(script: "git log -1 --pretty=format:'%an'", returnStdout: true).trim()
+                    def branch = env.GIT_BRANCH ?: sh(script: "git rev-parse --abbrev-ref HEAD", returnStdout: true).trim()
+                    def repoUrl = env.GIT_URL ?: "Unknown Repo"
+
+                    // Tạo nội dung tin nhắn Telegram
+                    def message = """
+                        🚀 *Commit mới trên: ${APP_URL}*
+                        🧑‍💻 *Author:* ${author}
+                        📝 *Message:* ${commitMessage}
+                        """.stripIndent()
+
+                    sendTelegramMessage(message)
+                }
+            }
+        }
+
+        stage('Deploy') {
+            steps {
+                script {
+                    if (env.ACTION == 'start') {
+                        echo "🚀 First deployment"
+                        sh """
+                        mv docker-compose.yml.example docker-compose.yml
+                        mv etc/odoo.conf.example etc/odoo.conf
+                        mv etc/server.log.example etc/server.log
+
+                        sudo mkdir -p data pg_data
+                        sudo chown -R $USER entrypoint.sh data pg_data etc
+                        sudo chmod -R 777 entrypoint.sh
+                        sudo chmod -R 777 data pg_data etc/
+
+                        docker-compose up -d
+                        """
+                        sendTelegramMessage("🚀 ${TITLE} đã được triển khai thành công! ✅ Pipeline done")
+                    } else if ( env.ACTION == 'restart') {
+                        echo "♻️ Restarting application"
+                        sh "sudo chmod -R 777 data pg_data etc/"
+                        sh "docker-compose restart"
+                        sendTelegramMessage("♻️ ${TITLE} đã được cập nhật và restart! ✅ Pipeline done")
+                    } else {
+                        echo "⛔ Stopping application..."
+                        sh "docker-compose stop"
+                        sendTelegramMessage("⛔ ${TITLE} đã bị dừng! ✅ Pipeline done")
+                    }
+                }
+            }
+        } // đóng stage Deploy
+
+    } // đóng stages
+
+    post {
+//             success {
+//                 script {
+//                     sendTelegramMessage("✅ Pipeline job ${TITLE} đã chạy thành công!")
+//                 }
+//             }
+            failure {
+                script {
+                    sendTelegramMessage("❌ Pipeline job ${TITLE} đã gặp lỗi! Kiểm tra log.")
+                }
+            }
+        } // đóng post
+
+} // đóng pipeline
+
+def sendTelegramMessage(String message) {
+    sh """
+    curl -s -X POST "https://api.telegram.org/bot6102275063:${env.TELEGRAM_BOT_TOKEN}/sendMessage" \
+    -d chat_id=${env.TELEGRAM_CHAT_ID} \
+    -d text="${message}"
+    """
+} // đóng hàm sendTelegramMessage
