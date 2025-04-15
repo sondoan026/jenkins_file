@@ -44,10 +44,6 @@ pipeline {
                     def branch = env.GIT_BRANCH ?: sh(script: "git rev-parse --abbrev-ref HEAD", returnStdout: true).trim()
                     def repoUrl = env.GIT_URL ?: "Unknown Repo"
 
-
-                    // Format danh sách file thay đổi
-                    def fileList = changedFiles ? changedFiles.split("\n").collect { "🔹 " + it }.join("\n") : "Không có file thay đổi."
-
                     // Tạo nội dung tin nhắn Telegram
                     def message = """
                         🚀 *Commit mới trên: ${APP_URL}*
