@@ -51,7 +51,7 @@ pipeline {
                         📝 *Message:* ${commitMessage}
                         """.stripIndent()
 
-                    sendTelegramMessage(message)
+//                     sendTelegramMessage(message)
                 }
             }
         }
@@ -73,16 +73,16 @@ pipeline {
 
                         docker-compose up -d
                         """
-                        sendTelegramMessage("🚀 ${TITLE} đã được triển khai thành công! ✅ Pipeline done")
+//                         sendTelegramMessage("🚀 ${TITLE} đã được triển khai thành công! ✅ Pipeline done")
                     } else if ( env.ACTION == 'restart') {
                         echo "♻️ Restarting application"
                         sh "sudo chmod -R 777 data pg_data etc/"
                         sh "docker-compose restart"
-                        sendTelegramMessage("♻️ ${TITLE} đã được cập nhật và restart! ✅ Pipeline done")
+//                         sendTelegramMessage("♻️ ${TITLE} đã được cập nhật và restart! ✅ Pipeline done")
                     } else {
                         echo "⛔ Stopping application..."
                         sh "docker-compose stop"
-                        sendTelegramMessage("⛔ ${TITLE} đã bị dừng! ✅ Pipeline done")
+//                         sendTelegramMessage("⛔ ${TITLE} đã bị dừng! ✅ Pipeline done")
                     }
                 }
             }
@@ -90,25 +90,18 @@ pipeline {
 
     } // đóng stages
 
-    post {
-//             success {
+//     post {
+// //             success {
+// //                 script {
+// //                     sendTelegramMessage("✅ Pipeline job ${TITLE} đã chạy thành công!")
+// //                 }
+// //             }
+//             failure {
 //                 script {
-//                     sendTelegramMessage("✅ Pipeline job ${TITLE} đã chạy thành công!")
+//                     sendTelegramMessage("❌ Pipeline job ${TITLE} đã gặp lỗi! Kiểm tra log.")
 //                 }
 //             }
-            failure {
-                script {
-                    sendTelegramMessage("❌ Pipeline job ${TITLE} đã gặp lỗi! Kiểm tra log.")
-                }
-            }
-        } // đóng post
+//         } // đóng post
 
 } // đóng pipeline
 
-def sendTelegramMessage(String message) {
-    sh """
-    curl -s -X POST "https://api.telegram.org/bot6102275063:${env.TELEGRAM_BOT_TOKEN}/sendMessage" \
-    -d chat_id=${env.TELEGRAM_CHAT_ID} \
-    -d text="${message}"
-    """
-} // đóng hàm sendTelegramMessage
