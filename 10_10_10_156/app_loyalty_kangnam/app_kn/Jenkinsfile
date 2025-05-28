@@ -34,26 +34,6 @@ pipeline {
             }
         } // đóng stage Checkout code
 
-        stage('Get Commit Info & Send to Telegram') {
-            steps {
-                script {
-                    // Lấy thông tin từ Git
-                    def commitHash = env.GIT_COMMIT ?: sh(script: "git rev-parse --short HEAD", returnStdout: true).trim()
-                    def commitMessage = sh(script: "git log -1 --pretty=%B", returnStdout: true).trim()
-                    def author = sh(script: "git log -1 --pretty=format:'%an'", returnStdout: true).trim()
-                    def branch = env.GIT_BRANCH ?: sh(script: "git rev-parse --abbrev-ref HEAD", returnStdout: true).trim()
-                    def repoUrl = env.GIT_URL ?: "Unknown Repo"
-
-                    // Tạo nội dung tin nhắn Telegram
-                    def message = """
-                        🚀 *Commit mới trên: ${APP_URL}*
-                        🧑‍💻 *Author:* ${author}
-                        📝 *Message:* ${commitMessage}
-                        """.stripIndent()
-                }
-            }
-        }
-
         stage('Deploy') {
             steps {
                 script {
