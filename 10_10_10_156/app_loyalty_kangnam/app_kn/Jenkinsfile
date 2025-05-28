@@ -50,8 +50,6 @@ pipeline {
                         🧑‍💻 *Author:* ${author}
                         📝 *Message:* ${commitMessage}
                         """.stripIndent()
-
-//                     sendTelegramMessage(message)
                 }
             }
         }
@@ -73,35 +71,19 @@ pipeline {
 
                         docker-compose up -d
                         """
-//                         sendTelegramMessage("🚀 ${TITLE} đã được triển khai thành công! ✅ Pipeline done")
                     } else if ( env.ACTION == 'restart') {
                         echo "♻️ Restarting application"
                         sh "sudo chmod -R 777 data pg_data etc/"
                         sh "docker-compose restart"
-//                         sendTelegramMessage("♻️ ${TITLE} đã được cập nhật và restart! ✅ Pipeline done")
                     } else {
                         echo "⛔ Stopping application..."
                         sh "docker-compose stop"
-//                         sendTelegramMessage("⛔ ${TITLE} đã bị dừng! ✅ Pipeline done")
                     }
                 }
             }
         } // đóng stage Deploy
 
     } // đóng stages
-
-//     post {
-// //             success {
-// //                 script {
-// //                     sendTelegramMessage("✅ Pipeline job ${TITLE} đã chạy thành công!")
-// //                 }
-// //             }
-//             failure {
-//                 script {
-//                     sendTelegramMessage("❌ Pipeline job ${TITLE} đã gặp lỗi! Kiểm tra log.")
-//                 }
-//             }
-//         } // đóng post
 
 } // đóng pipeline
 
