@@ -54,7 +54,6 @@ pipeline {
                         📝 *Message:* ${commitMessage}
                         """.stripIndent()
 
-                    sendTelegramMessage(message)
                 }
             }
         }
@@ -77,40 +76,16 @@ pipeline {
 
                         docker-compose up -d
                     """
-                    sendTelegramMessage("🚀 App ${TITLE} đã được triển khai thành công! ✅ Pipeline done")
                 } else if ( env.ACTION == 'restart') {
                     echo "♻️ Restarting application"
                     sh "docker-compose restart"
-                    sendTelegramMessage("♻️ App ${TITLE} đã được cập nhật và restart! ✅ Pipeline done")
                 } else {
                     echo "⛔ Stopping application..."
                     sh "docker-compose stop"
-                    sendTelegramMessage("⛔ App ${TITLE} đã bị dừng! ✅ Pipeline done")
                 }
             }
             }
         } // đóng stage deploy
 
     } // đóng stages
-
-    post {
-//         success {
-//             script {
-//                 sendTelegramMessage("✅ Pipeline job tai_lieu_y_khoa đã chạy thành công!")
-//             }
-//         }
-        failure {
-            script {
-                sendTelegramMessage("❌ Pipeline ${TITLE} đã gặp lỗi! Kiểm tra log.")
-            }
-        }
-    } // đóng post
 }
-
-def sendTelegramMessage(String message) {
-    sh """
-        curl -s -X POST "https://api.telegram.org/bot6102275063:${env.TELEGRAM_BOT_TOKEN}/sendMessage" \
-        -d chat_id=${env.TELEGRAM_CHAT_ID} \
-        -d text="${message}"
-    """
-} // đóng hàm sendTelegramMessage
